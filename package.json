@@ -1,0 +1,14 @@
+{
+  "name": "omniverse-communication-system",
+  "version": "1.0.0",
+  "description": "Omniverse Communication System by Lead Developer Salim Abdullahi Zakka",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Salim Abdullahi Zakka",
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}
