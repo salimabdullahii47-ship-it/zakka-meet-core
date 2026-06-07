@@ -571,6 +571,24 @@ button {
 .login-input-group {
     margin-bottom: 15px;
     display: flex;
+@media screen and (max-width: 768px) {
+  body, .main-container, .app-layout, .workspace, .meeting-room {
+    flex-direction: column !important;
+    display: flex !important;
+    overflow-y: auto !important;
+  }
+  .sidebar, .control-panel, .chat-panel, .participant-list, .menu-bar, .navigation-bar {
+    width: 100% !important;
+    max-width: 100% !important;
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin-bottom: 15px !important;
+  }
+}
+
+
+   
     flex-direction: column;
     gap: 6px;
 }
