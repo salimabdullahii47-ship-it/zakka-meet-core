@@ -617,6 +617,15 @@ button {
     transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
+   /* Fix touch events so buttons can be clicked on phones */
+@media screen and (max-width: 768px) {
+  button, .app-icon, .menu-item, .clickable {
+    pointer-events: auto !important; /* Forces your phone to allow clicking */
+    cursor: pointer !important;
+    z-index: 9999 !important; /* Pulls your buttons to the very front layer */
+  }
+}
+
     align-items: center;
     justify-content: center;
     pointer-events: none; /* Sits elegantly in background behind app shortcut windows */
