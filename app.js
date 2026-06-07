@@ -341,9 +341,47 @@ setInterval(() => {
 // =========================================================================
 // 🚀 7. HARDWARE INITIALIZATION BOOT ENGINE TRIGGER 
 // =========================================================================
+// --- Mobile-friendly pointer/click handler helpers ---
+function addPointerHandler(el, fn) {
+    if (!el || typeof fn !== 'function') return;
+    const handler = function(e) { e.preventDefault(); fn(e); };
+    el.addEventListener('click', handler, { passive: false });
+    el.addEventListener('touchstart', handler, { passive: false });
+    // ensure touch targets are reachable even inside translucent overlays
+    el.style.pointerEvents = 'auto';
+    el.style.zIndex = el.style.zIndex || '1200';
+}
+
+function registerInteractionHandlers() {
+    // Auto-bind any element with `data-action="functionName"` to that function
+    document.querySelectorAll('[data-action]').forEach((el) => {
+        const actionName = el.dataset.action;
+        if (!actionName) return;
+        // allow shorthand where dataset.target specifies an id param
+        const targetId = el.dataset.target;
+        const fn = window[actionName] || (window[actionName] = function() {
+            // if actionName isn't defined, try to interpret common shorthands
+            if (actionName === 'openChatPanel') openWindow('textMeetingWin');
+            if (actionName === 'openParticipantsPanel') openWindow('participantsPanel');
+            if (actionName === 'raiseHand') runSectorAction('Raise Hand', 'User raised their hand');
+            if (actionName === 'closeWindow' && targetId) closeWindow(targetId);
+        });
+
+        addPointerHandler(el, (e) => {
+            // call bound function with synthetic event and target id when present
+            if (targetId && typeof window[actionName] === 'function') {
+                window[actionName](targetId);
+            } else if (typeof fn === 'function') {
+                fn(e);
+            }
+        });
+    });
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     forceInitializeCameraFeed(); // Starts camera and audio immediately on load
     openWindow('welcomeWin');    // Force fires your gorgeous purple Welcome window box open!
+    registerInteractionHandlers(); // Bind click + touch handlers for controls
 });
 // =========================================================================
 // 💳 STRIPE PREMIUM BILLING TRANSACTION ACCELERATOR

@@ -571,24 +571,6 @@ button {
 .login-input-group {
     margin-bottom: 15px;
     display: flex;
-@media screen and (max-width: 768px) {
-  body, .main-container, .app-layout, .workspace, .meeting-room {
-    flex-direction: column !important;
-    display: flex !important;
-    overflow-y: auto !important;
-  }
-  .sidebar, .control-panel, .chat-panel, .participant-list, .menu-bar, .navigation-bar {
-    width: 100% !important;
-    max-width: 100% !important;
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    margin-bottom: 15px !important;
-  }
-}
-
-
-   
     flex-direction: column;
     gap: 6px;
 }
@@ -617,15 +599,6 @@ button {
     transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
-   /* Fix touch events so buttons can be clicked on phones */
-@media screen and (max-width: 768px) {
-  button, .app-icon, .menu-item, .clickable {
-    pointer-events: auto !important; /* Forces your phone to allow clicking */
-    cursor: pointer !important;
-    z-index: 9999 !important; /* Pulls your buttons to the very front layer */
-  }
-}
-
     align-items: center;
     justify-content: center;
     pointer-events: none; /* Sits elegantly in background behind app shortcut windows */
@@ -689,33 +662,82 @@ button {
     will-change: transform, box-shadow;
     animation: brandingLogoPulse 4s ease-in-out infinite;
 }
-@media screen and (max-width: 768px) {
-  body, .main-container, .app-layout, .workspace, .meeting-room {
-    flex-direction: column !important;
-    display: flex !important;
-    overflow-y: auto !important;
-  }
-  .sidebar, .control-panel, .chat-panel, .participant-list, .menu-bar, .navigation-bar {
-    width: 100% !important;
-    max-width: 100% !important;
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    margin-bottom: 15px !important;
-  }
+
+/* =========================================================================
+   🎥 8. MEETING ROOM — RESPONSIVE, GLASSMORPHISM, TOUCH-FRIENDLY
+   ========================================================================= */
+.meeting-room {
+    display: grid;
+    grid-template-columns: 280px 1fr 340px;
+    gap: 18px;
+    padding: 18px;
+    align-items: start;
+    height: calc(100vh - 120px);
 }
-@media screen and (max-width: 768px) {
-  body, .main-container, .app-layout, .workspace, .meeting-room {
-    flex-direction: column !important;
-    display: flex !important;
-    overflow-y: auto !important;
-  }
-  .sidebar, .control-panel, .chat-panel, .participant-list, .menu-bar, .navigation-bar {
-    width: 100% !important;
-    max-width: 100% !important;
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    margin-bottom: 15px !important;
-  }
+
+.panel {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px) saturate(120%);
+    border-radius: 14px;
+    padding: 14px;
+    color: var(--text-main);
 }
+
+.panel-header {
+    display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;
+    font-weight:700; color:var(--accent-blue);
+}
+
+.panel-left { min-width: 220px; max-width: 320px; }
+.panel-right { min-width: 260px; max-width: 420px; }
+.panel-center { min-width: 320px; }
+
+.main-video-wrap { width:100%; height:60vh; border-radius:12px; overflow:hidden; background:#000; display:flex; align-items:center; justify-content:center; }
+.main-video-wrap video { width:100%; height:100%; object-fit:cover; display:block; }
+
+.video-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:12px; margin-top:12px; }
+.video-tile { background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04); min-height:100px; display:flex; align-items:center; justify-content:center; border-radius:10px; }
+
+/* Control bar — thumb friendly */
+.meeting-controls { position:fixed; left:50%; transform:translateX(-50%); bottom:18px; display:flex; gap:12px; padding:10px 14px; border-radius:40px; z-index:1400; }
+.control-btn { min-width:48px; min-height:48px; width:56px; height:56px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); color:var(--text-main); font-size:1.05rem; cursor:pointer; box-shadow:0 8px 18px rgba(2,6,23,0.6); transition:transform 120ms ease, background 160ms ease; pointer-events:auto !important; z-index:1500 !important; }
+.control-btn:active { transform: translateY(2px) scale(0.98); }
+.control-btn.danger { background: linear-gradient(180deg, rgba(239,68,68,0.95), rgba(239,68,68,0.85)); border-color: rgba(0,0,0,0.2); color:#fff; }
+
+.panel-close { background:transparent; border:none; color:var(--text-muted); cursor:pointer; pointer-events:auto !important; z-index:1600; }
+
+/* Panel slide-up for mobile when active */
+.panel-right { position:relative; transition: transform 320ms cubic-bezier(.2,.9,.3,1), opacity 220ms ease; }
+.panel-right.active { transform: translateY(0); }
+
+/* Accessibility & touch targets */
+button, .control-btn, .panel-close { -webkit-tap-highlight-color: rgba(255,255,255,0.05); }
+
+/* -------------------------------------------------------------------------
+   Medium screens: tuck sidebars into collapsible drawers
+   ------------------------------------------------------------------------- */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    .meeting-room { grid-template-columns: 80px 1fr 80px; gap:12px; padding:12px; }
+    .panel-left, .panel-right { min-width: 72px; max-width: 120px; overflow:hidden; }
+    .panel-left .participants-list, .panel-right .chat-stream { display:none; }
+    .main-video-wrap { height:55vh; }
+    .control-btn { width:50px; height:50px; }
+}
+
+/* -------------------------------------------------------------------------
+   Small screens: main video occupies top 40% of the viewport; other elements flow
+   ------------------------------------------------------------------------- */
+@media screen and (max-width: 768px) {
+    .meeting-room { grid-template-columns: 1fr; grid-template-rows: auto; gap:10px; padding:10px; height: auto; }
+    .panel-left, .panel-right { display:block; width:100%; max-width:100%; position:fixed; left:0; right:0; border-radius:12px 12px 0 0; }
+    .panel-left { bottom:0; transform: translateY(110%); height:60vh; }
+    .panel-right { bottom:0; transform: translateY(110%); height:60vh; }
+    .panel-left.active, .panel-right.active { transform: translateY(0); box-shadow: 0 -18px 40px rgba(2,6,23,0.6); }
+    .main-video-wrap { height:40vh; }
+    .video-grid { margin-top:0; display:flex; overflow-x:auto; gap:8px; padding:10px 6px; }
+    .video-tile { min-width:120px; min-height:80px; flex:0 0 auto; }
+    .meeting-controls { bottom:10px; left:50%; transform:translateX(-50%); }
+    .control-btn { min-width:48px; min-height:48px; width:48px; height:48px; }
+}
+

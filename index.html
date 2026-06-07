@@ -1,565 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZAKKA MEET OS</title>
-        <link rel="stylesheet" type="text/css" href="./style.css?v=2.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Zakka Meet — Responsive Meeting Room</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body data-theme="dark">
-    <!-- TOP SYSTEM LOG MONITOR METRICS -->
-    <header class="top-system-bar">
-        <div class="system-title">
-            <h1>ZAKKA MEET</h1>
-            <span>System Creator: Salim Abdullahi Zakka</span>
-        </div>
-        <div class="system-stats">
-            <span class="stat-badge" id="playerCount">👥 142 Active</span>
-            <span class="stat-badge" id="timerBadge">⏱️ Time: 00:00:00</span>
-            <span class="stat-badge" style="color: #4ade80;" id="walletBadge">💰 Wallet: $0.00</span>
-        </div>
-        <div style="display: flex; gap: 10px;">
-            <!-- 💳 NEW STRIPE PREMIUM TRIGGER BUTTON -->
-            <button class="dock-btn" style="padding: 5px 10px; font-size: 0.8rem; background: #eab308; color: #000; font-weight: 700; border: none; border-radius: 6px; cursor: pointer;" onclick="openWindow('billingWin')">⭐ Go Premium (Stripe)</button>
-            <button class="dock-btn" style="padding: 5px 10px; font-size: 0.8rem; cursor: pointer;" onclick="toggleTheme()">🌗 Change Mode</button>
-        </div>
-    </header>
+  <div class="top-system-bar">
+    <div class="system-title">
+      <h1>Zakka Meet</h1>
+      <span>Secure • Ultra Glass • Responsive</span>
+    </div>
+    <div class="system-stats">
+      <div id="timerBadge" class="stat-badge">⏱️ Time: 00:00:00</div>
+      <div id="walletBadge" class="stat-badge">💰 Wallet: $0.00</div>
+    </div>
+  </div>
 
-    <!-- DESKTOP APP SURFACE COMPONENT -->
-    <main class="desktop-workspace">
-        <!-- 📹 UPDATED HARD-LINKED CAMERA APP SHORTCUT ICON -->
-        <div class="desktop-app-icon" onclick="document.getElementById('forcedCameraModalWindow').style.display='flex';">
-            <div class="icon-graphic">📹</div>
-            <div class="icon-label">Camera Node Stream</div>
-        </div>
+  <main class="meeting-room">
+    <aside class="panel panel-left" id="participantsPanel">
+      <div class="panel-header">Participants <button class="panel-close" data-action="closeWindow" data-target="participantsPanel">✕</button></div>
+      <div class="participants-list">
+        <div class="participant">Host • You</div>
+        <div class="participant">Guest 1</div>
+        <div class="participant">Guest 2</div>
+      </div>
+    </aside>
 
-        <!-- Forced Camera Modal Window (created to match app.js expectations) -->
-        <div id="forcedCameraModalWindow" style="display:none; position:fixed; inset:0; align-items:center; justify-content:center; background:rgba(0,0,0,0.6); z-index:1200;">
-            <div style="background:#0b1220; padding:12px; border-radius:8px; width:640px; max-width:95%;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <strong style="color:#38bdf8;">Camera Node Stream</strong>
-                    <button class="dock-btn" onclick="document.getElementById('forcedCameraModalWindow').style.display='none'">❌</button>
-                </div>
-                <video id="standaloneLocalVideoNode" autoplay playsinline muted style="width:100%; height:360px; background:#000; border-radius:6px;"></video>
-                <div style="display:flex; gap:8px; margin-top:8px;">
-                    <button class="dock-btn" onclick="forceInitializeCameraFeed()">🔄 Re-init Camera</button>
-                    <button class="dock-btn" id="camBtn" onclick="toggleStandaloneCameraDriver()">📹 Stop Cam Node</button>
-                </div>
-            </div>
-        </div>
+    <section class="panel panel-center">
+      <div class="main-video-wrap">
+        <video id="meetingLocalVideoNode" autoplay muted playsinline></video>
+        <video id="screenShareVideo" autoplay playsinline style="display:none"></video>
+      </div>
 
-   <!-- 👑 BACKDROP WALLPAPER BRANDING VECTOR LOGO GRIDS -->
-        <div class="branding-logo-container">
-            <div class="vector-logo-glow-ring">🌐</div>
-            <h2 class="branding-logo-text">ZAKKA MEET</h2>
-            <div class="branding-logo-sub">Omniverse OS Engine</div>
-        </div>
-        <!-- 🌟 PRIMARY APPLICATION DESKTOP SHORTCUT ICONS GRID -->
-        <div class="desktop-app-icon" onclick="openWindow('globalMeetingWin')">
-            <div class="icon-graphic">🌐</div>
-            <div class="icon-label">Global Meeting Room</div>
-        </div>
-        <!-- 🤖 NEW AI INTEGRATION SHORTCUT APP ICON -->
-        <div class="desktop-app-icon" onclick="openWindow('aiSupportWin')">
-            <div class="icon-graphic">🤖</div>
-            <div class="icon-label">Omniverse AI Support</div>
-        </div>
+      <div id="masterConferenceVideoGrid" class="video-grid">
+        <div class="video-tile host" id="gridPanelHost">Host</div>
+        <div class="video-tile guest" id="gridPanelGuest">Guest</div>
+        <div class="video-tile mock" id="gridPanelManyMock1">User</div>
+        <div class="video-tile mock" id="gridPanelManyMock2">User</div>
+      </div>
+    </section>
 
-        <div class="desktop-app-icon" onclick="openWindow('textMeetingWin')">
-            <div class="icon-graphic">🔤</div>
-            <div class="icon-label">Text Meeting Network</div>
-        </div>
+    <aside class="panel panel-right" id="chatPanel">
+      <div class="panel-header">Chat <button class="panel-close" data-action="closeWindow" data-target="textMeetingWin">✕</button></div>
+      <div class="chat-stream" id="textMeetingBox"></div>
+      <div class="chat-input">
+        <input id="textMeetingInputField" placeholder="Type a message" />
+        <button class="send" data-action="triggerTextNetworkBroadcast">Send</button>
+      </div>
+    </aside>
+  </main>
 
-        <div class="desktop-app-icon" onclick="openWindow('shareSocialWin')">
-            <div class="icon-graphic">📢</div>
-            <div class="icon-label">Social Broadcast</div>
-        </div>
+  <div class="bottom-dock-bar meeting-controls" role="toolbar" aria-label="Meeting controls">
+    <button id="muteBtn" class="control-btn" data-action="toggleZakkaMeetMicrophone">🎙️</button>
+    <button id="camBtn" class="control-btn" data-action="toggleStandaloneCameraDriver">📹</button>
+    <button id="shareBtn" class="control-btn" data-action="executeRealScreenShare">🖥️</button>
+    <button id="raiseHandBtn" class="control-btn" data-action="raiseHand">✋</button>
+    <button id="chatToggleBtn" class="control-btn" data-action="openChatPanel">💬</button>
+    <button id="participantsToggleBtn" class="control-btn" data-action="openParticipantsPanel">👥</button>
+    <button id="endCallBtn" class="control-btn danger" data-action="closeGlobalMeetingCallSession">🔴 End</button>
+  </div>
 
-        <div class="desktop-app-icon" onclick="openWindow('eduWin')">
-            <div class="icon-graphic">🎓</div>
-            <div class="icon-label">Education Sector</div>
-        </div>
+  <!-- Lightweight welcome and modals used by app.js openWindow/closeWindow -->
+  <div id="welcomeWin" class="app-window" role="dialog" aria-hidden="true">
+    <div class="window-header">
+      <div class="window-title">Welcome</div>
+      <div class="window-controls"><button data-action="closeWindow" data-target="welcomeWin">Close</button></div>
+    </div>
+    <div class="window-body">Welcome to Zakka Meet — your meeting layout is now responsive.</div>
+  </div>
 
-        <div class="desktop-app-icon" onclick="openWindow('healthWin')">
-            <div class="icon-graphic">🏥</div>
-            <div class="icon-label">Healthcare Telemedicine</div>
-        </div>
-
-        <div class="desktop-app-icon" onclick="openWindow('bizWin')">
-            <div class="icon-graphic">💼</div>
-            <div class="icon-label">Business Industry</div>
-        </div>
-
-        <div class="desktop-app-icon" onclick="openWindow('envWin')">
-            <div class="icon-graphic">🌲</div>
-            <div class="icon-label">Environmental Analytics</div>
-        </div>
-
-        <div class="desktop-app-icon" onclick="openWindow('commWin')">
-            <div class="icon-graphic">📢</div>
-            <div class="icon-label">Communication Press</div>
-        </div>
-
-        <!-- ========================================== -->
-        <!-- 🏢 INDEPENDENT WINDOW LAYOUT LAYERS        -->
-        <!-- ========================================== -->
-
-        <!-- Welcome Profile Prompt Window (Pop-up on startup) -->
-        <div class="app-window active" id="welcomeWin" style="top: 20%; left: 30%; width: 40%; height: 50%;">
-            <div class="window-header" style="background: linear-gradient(90deg, #38bdf8, #8b5cf6);">
-                <span class="window-title">✨ Welcome to ZAKKA MEET Engine</span>
-                <div class="window-controls"><button onclick="closeWindow('welcomeWin')">❌</button></div>
-            </div>
-            <div class="window-body" style="text-align: center; display: flex; flex-direction: column; justify-content: center; gap: 15px;">
-                <h2>Welcome, Salim Abdullahi Zakka!</h2>
-                <p>Your global multi-sector communications desktop framework is online and ready for deployment.</p>
-                <button class="dock-btn" style="margin: 0 auto; background: #38bdf8; color: #000;" onclick="closeWindow('welcomeWin')">Initialize Workspace</button>
-            </div>
-        </div>
-
-        <!-- System Exit Shutdown Pop-up Box -->
-        <div class="app-window" id="exitWin" style="top: 30%; left: 35%; width: 30%; height: 35%;">
-            <div class="window-header" style="background: #ef4444;">
-                <span class="window-title">⚠️ Close ZAKKA MEET Server Session</span>
-                <div class="window-controls"><button onclick="closeWindow('exitWin')">❌</button></div>
-            </div>
-            <div class="window-body" style="text-align: center; padding-top: 30px;">
-                <p>Are you sure you want to end this global workspace stream execution session?</p><br>
-                <div style="display: flex; justify-content: center; gap: 15px;">
-                    <button class="dock-btn danger" onclick="window.close()">Confirm Disconnect</button>
-                    <button class="dock-btn" onclick="closeWindow('exitWin')">Cancel</button>
-                </div>
-            </div>
-        </div>
-        <!-- APP 1: GLOBAL MEETING ROOM WINDOW -->
-        <div class="app-window" id="globalMeetingWin" style="top: 8%; left: 12%; width: 75%; height: 82%;">
-            <div class="window-header" style="background: linear-gradient(90deg, #0078ff, #00c6ff);">
-                <span class="window-title">🌐 Global Meeting Room Live Grid — Creator: Salim A. Zakka</span>
-                <div class="window-controls">
-                    <button onclick="toggleGlobalMeetingFullScreen()" title="Full Screen Call">🔲 Full Screen</button>
-                    <button onclick="minimizeMeetingToFloatingTile()" title="Minimize Call View">🗕 Minimize View</button>
-                    <button onclick="closeWindow('globalMeetingWin')">❌</button>
-                </div>
-            </div>
-            
-            <div class="window-body" style="padding:0; display:flex; flex-direction:column; height:calc(100% - 45px); background:#090d16;">
-                
-                <!-- 🎛️ NEW PREMIUM SUITE: CONFERENCE STYLES CONTROLLER TRAY -->
-                <div style="padding:12px 20px; background:#111827; display:flex; justify-content:space-between; align-items:center; gap:15px; border-bottom:1px solid rgba(255,255,255,0.05); flex-wrap: wrap;">
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <span style="font-size:0.8rem; font-weight:700; color:#00c6ff;">Layout View:</span>
-                        <!-- 🔘 CLICK BUTTONS TO TRANSFORM CALL MODES INSTANTLY -->
-                        <button class="dock-btn" style="padding:6px 12px; font-size:0.75rem; background:#1f2937;" onclick="switchConferenceRoomGridStyle('single')">👤 1 Person Style</button>
-                        <button class="dock-btn" style="padding:6px 12px; font-size:0.75rem; background:#1f2937;" onclick="switchConferenceRoomGridStyle('dual')">👥 2 Person Style</button>
-                        <button class="dock-btn" style="padding:6px 12px; font-size:0.75rem; background:#1f2937;" onclick="switchConferenceRoomGridStyle('many')">📱 Many Person Style</button>
-                    </div>
-                    
-                    <div style="display:flex; gap:10px; align-items:center;">
-                        <input type="text" id="pastedRoomTokenInput" placeholder="Enter Guest token..." style="background:#1f2937; border:1px solid rgba(255,255,255,0.1); padding:6px 12px; border-radius:6px; color:#fff; font-size:0.8rem; outline:none; width:150px;">
-                        <button class="dock-btn" style="background:#0078ff; color:#fff; font-size:0.8rem; padding:6px 12px; border:none;" onclick="executeGlobalMeetingConnect()">🔗 Connect via Link Token</button>
-                        <button class="dock-btn" id="recordBtn" style="background:#ef4444; color:#fff; font-size:0.8rem; border:none;" onclick="toggleMeetingCallRecorder()">⏺️ Start Call Recorder</button>
-                    </div>
-                </div>
-                <!-- DUAL COMPONENT SCREEN SPLITTER FRAMEWORK -->
-                <div style="flex: 1; display: flex; overflow: hidden; background: #090d16;">
-                    
-                    <!-- 🎞️ LEFT PANEL: DYNAMICALLY RECONFIGURING VIDEO MATRIX BOX CONTAINER -->
-                    <div id="masterConferenceVideoGrid" style="flex: 1; display: grid; grid-template-columns: 1fr; gap: 15px; padding: 20px; overflow-y: auto; transition: all 0.3s ease; position: relative;">
-                        
-                        <!-- 💬 MULTI-USER AI LIVE SUBTITLE WATERMARK FLOATING OVERLAY LAYER -->
-                        <div id="videoCallLiveSubtitleOverlayRow" style="position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); border: 1px solid rgba(56,189,248,0.4); color: #38bdf8; font-family: monospace; font-size: 0.9rem; padding: 10px 20px; border-radius: 8px; font-weight: 700; display: none; z-index: 999; box-shadow: 0 10px 25px rgba(0,0,0,0.5); pointer-events: none; text-align: center; max-width: 80%;">
-                            [🤖 AI Subtitle Engine]: Awaiting spoken audio matrices data pipelines...
-                        </div>
-
-                        <!-- GRID PANEL A: HOST LOCAL CAMERA STREAM -->
-                        <div id="gridPanelHost" style="background: #1f2937; border-radius: 12px; border: 2px solid #0078ff; overflow: hidden; position: relative; min-height: 240px; box-shadow: 0 10px 20px rgba(0,0,0,0.3);">
-                            <video id="meetingLocalVideoNode" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover;"></video>
-                            <div style="position:absolute; bottom:12px; left:12px; background:rgba(15,23,42,0.8); padding:4px 12px; border-radius:20px; font-size:0.8rem; font-weight:700; color:#00c6ff; border:1px solid rgba(56,189,248,0.3);">
-                                👤 Salim Abdullahi Zakka (Host Operator)
-                            </div>
-                            <!-- ZAKKA PREMIUM MEETING CONTAINER (OVERLAY, non-invasive) -->
-                            <div id="zakka-zoom-meeting-container" style="position:absolute; inset:0; pointer-events:none;">
-                                <div id="zakka-premium-grid" style="position:relative; width:100%; height:100%; display:grid; grid-template-columns:1fr; gap:8px; padding:12px; box-sizing:border-box; pointer-events:none;">
-                                    <!-- Glassmorphism info ribbon -->
-                                    <div id="zakka-info-ribbon" style="position:absolute; top:12px; left:12px; right:12px; pointer-events:none; display:flex; gap:12px; justify-content:space-between; align-items:center; padding:8px 12px; border-radius:8px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,0.05); color:#cbd5e1; font-size:0.75rem; font-weight:600; box-shadow: 0 6px 18px rgba(0,0,0,0.6);">
-                                        <div>🔒 Active Bridge Encryption: AES-256 GCM</div>
-                                        <div>🎚️ Audio Feed: Ultra-HD Voice Matrix</div>
-                                        <div id="zakka-live-timestamp">⏱️ 00:00:00</div>
-                                    </div>
-
-                                    <!-- Equalizer canvas (shown when camera stream is off) -->
-                                    <canvas id="zakka-eq-canvas" style="width:100%; height:100%; border-radius:8px; display:none; background:linear-gradient(180deg, rgba(11,15,25,0.6), rgba(11,15,25,0.4)); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);"></canvas>
-
-                                    <!-- Capture button (bottom-right overlay, pointer-events enabled) -->
-                                    <div id="zakka-overlay-controls" style="position:absolute; bottom:12px; right:12px; pointer-events:auto; display:flex; gap:8px; align-items:center;">
-                                        <button class="dock-btn" id="zakkaCaptureBtn" onclick="captureRoomScreenshot()" style="background:var(--accent-blue,#38bdf8); color:#000; font-weight:700; border-radius:6px; padding:8px 12px;">📸 Capture Room Screenshot</button>
-                                        <button class="dock-btn" id="zakkaRecordBtn" onclick="toggleZakkaLocalRecording()" style="background:#ef4444; color:#fff; font-weight:700; border-radius:6px; padding:8px 12px;">🔴 Start Local Record</button>
-                                        <button class="dock-btn" id="zakkaShareBtn" onclick="zakkaBroadcastShare()" style="background:#10b981; color:#000; font-weight:700; border-radius:6px; padding:8px 12px;">📢 Broadcast Record Link</button>
-                                        <select id="zakkaFilterSelect" onchange="applyZakkaFilter(this.value)" style="border-radius:6px; padding:6px; background:rgba(0,0,0,0.6); color:#cbd5e1; font-weight:700;">
-                                            <option value="pristine">🎚️ FX Filter Matrix: Pristine Studio</option>
-                                            <option value="cyber">Cyber Obsidian Dark</option>
-                                            <option value="blur">Corporate Blur</option>
-                                            <option value="noir">Cinematic Noir</option>
-                                        </select>
-                                    </div>
-                                    <!-- Toast container for non-intrusive notifications -->
-                                    <div id="zakka-toast-container" class="zakka-toast-container"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- GRID PANEL B: REMOTE GUEST CAMERA CONSOLE -->
-                        <div id="gridPanelGuest" style="background:#111827; border-radius:12px; border:1px dashed rgba(255,255,255,0.1); overflow:hidden; position:relative; min-height:240px; display:none; flex-direction:column; align-items:center; justify-content:center; gap:10px; text-align:center; padding:20px;">
-                            <span style="font-size:3rem; opacity:0.3;">👥</span>
-                            <div id="remoteGridOverlay" style="font-weight:600; font-size:0.9rem; color:#94a3b8;">Guest Node Connected Successfully</div>
-                            <span style="font-size:0.75rem; color:#4b5563;">Live encrypted data communication pipeline active.</span>
-                        </div>
-
-                        <!-- GRID PANEL C: EXTRA PARTICIPANTS MANY STYLE MOCK OVERLAYS -->
-                        <div id="gridPanelManyMock1" style="background:#131924; border-radius:12px; border:1px solid rgba(255,255,255,0.05); overflow:hidden; position:relative; min-height:240px; display:none; flex-direction:column; align-items:center; justify-content:center; color:#64748b;">
-                            <span style="font-size:2.5rem;">👨‍💻</span>
-                            <span style="font-size:0.8rem; font-weight:600; margin-top:10px; color:#94a3b8;">Guest Node #2 (Auditor)</span>
-                        </div>
-                        <div id="gridPanelManyMock2" style="background:#131924; border-radius:12px; border:1px solid rgba(255,255,255,0.05); overflow:hidden; position:relative; min-height:240px; display:none; flex-direction:column; align-items:center; justify-content:center; color:#64748b;">
-                            <span style="font-size:2.5rem;">👩‍💻</span>
-                            <span style="font-size:0.8rem; font-weight:600; margin-top:10px; color:#94a3b8;">Guest Node #3 (Observer)</span>
-                        </div>
-
-                        <!-- SCREEN SHARE DISPLAY BUFFER VIDEO LAYER -->
-                        <video id="screenShareVideo" autoplay playsinline style="width:100%; height:100%; object-fit:cover; background:#000; border-radius:12px; border:2px solid #eab308; display:none; min-height:240px;"></video>
-                    </div>
-
-                    <!-- 📑 RIGHT PANEL: CONFERENCE FAST SIDEBAR LINK CHAT PANEL -->
-                    <div style="width: 280px; background: #111b21; border-left: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; overflow: hidden;">
-                        <div style="padding: 12px 15px; background: #202c33; font-weight: 700; font-size: 0.8rem; color: #8696a0; border-bottom: 1px solid rgba(255,255,255,0.05);">IN-CALL DISCUSSION MESSAGES</div>
-                        
-                        <!-- FAST CHAT HOVER FEED -->
-                        <div id="conferenceInCallLiveChatBox" style="flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem;">
-                            <div style="background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 8px; color: #8696a0; line-height: 1.3;">
-                                <b style="color: #00c6ff;">System Broadcast:</b> Welcome to the room discussion board logs layer.
-                            </div>
-                        </div>
-
-                        <!-- CALL INPUT FORM CONTROLS FOOTER -->
-                        <div style="padding: 10px; background: #111b21; border-top: 1px solid rgba(255,255,255,0.05); display: flex; gap: 8px;">
-                            <input type="text" id="conferenceInCallChatInputPort" placeholder="Type room message..." style="flex: 1; background: #2a3942; border: none; padding: 8px 12px; border-radius: 6px; color: #fff; font-size: 0.8rem; outline: none;" onkeypress="handleInCallChatInputFieldKeyPress(event)">
-                            <button class="dock-btn" style="background: #0078ff; color: #fff; font-size: 0.75rem; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;" onclick="executeInCallChatBroadcastMessage()">Send</button>
-                        </div>
-                    </div>
-
-                </div>
-
-               
-
-
-
-                <!-- 🎛️ INTEGRATED CONSOLE CONTROL DASHBOARD FOR STATUSES & TIMERS -->
-                <div style="padding: 12px 20px; background: #111827; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;">
-                    
-                    <!-- ⏱️ CALL LIVE RUNTIME CONTROLLERS -->
-                    <div style="display: flex; gap: 15px; align-items: center;">
-                        <span class="stat-badge" id="meetingTimerClockBadge" style="background: rgba(59,130,246,0.1); color: #00c6ff; border: 1px solid rgba(59,130,246,0.3); font-size: 0.8rem; font-weight: 700; padding: 6px 12px; border-radius: 20px;">
-                            ⏳ Call Runtime: 00min 00sec
-                        </span>
-                        <span class="stat-badge" id="userPresenceStatusBadge" style="background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); font-size: 0.8rem; font-weight: 700; padding: 6px 12px; border-radius: 20px;">
-                            🟢 Status: Active Online
-                        </span>
-                    </div>
-
-                    <!-- 🙋‍♂️ USER CALL EXPRESSIONS CONTROL HOOKS -->
-                    <div style="display: flex; gap: 8px;">
-                        <button class="dock-btn" style="padding: 6px 12px; font-size: 0.75rem; background: #eab308; color: #000; font-weight: 700; border: none; border-radius: 6px; cursor: pointer;" onclick="triggerUserConferenceExpression('busy')">⚠️ Mark Busy</button>
-                        <button class="dock-btn" style="padding: 6px 12px; font-size: 0.75rem; background: #a855f7; color: #fff; font-weight: 700; border: none; border-radius: 6px; cursor: pointer;" onclick="triggerUserConferenceExpression('excuse')">🙋‍♂️ Take Excuse</button>
-                        <button class="dock-btn" style="padding: 6px 12px; font-size: 0.75rem; background: #22c55e; color: #fff; font-weight: 700; border: none; border-radius: 6px; cursor: pointer;" onclick="triggerUserConferenceExpression('active')">🟢 Reset Active</button>
-                    </div>
-
-                </div>
-
-            </div>
-        </div>
-
-
-            
-            <div class="window-body" style="padding:0; display:flex; height:calc(100% - 45px); background:#0b0f19;">
-                <div id="meetingVideoCanvasArea" style="flex:1; position:relative; background:#000; display:flex; align-items:center; justify-content:center;">
-                    <!-- 📹 CORE WEB CAMERA NODE LAYER -->
-                    <video id="meetingLocalVideoNode" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover;"></video>
-                    <!-- Screen sharing tracking sub-player elements -->
-                    <video id="screenShareVideo" autoplay playsinline style="display:none; position:absolute; top:10px; right:10px; width:30%; height:30%; border:2px solid #38bdf8; border-radius:8px; z-index:100; background:#000;"></video>
-                    
-                    <div id="remoteGridOverlay" style="position:absolute; bottom:20px; right:20px; width:200px; height:150px; background:#1e293b; border:2px solid #38bdf8; border-radius:8px; display:flex; align-items:center; justify-content:center; z-index:10;">
-                        <span style="font-size:0.8rem; font-weight:700; color:#64748b;">👤 Connected Guest Node</span>
-                    </div>
-                </div>
-                <div style="width:280px; background:rgba(15,23,42,0.9); border-left:1px solid var(--border-color); padding:15px; display:flex; flex-direction:column; gap:15px;">
-                    <div>
-                        <h4 style="color:#38bdf8; margin-bottom:5px;">🔗 Connect via Link Token</h4>
-                        <input type="text" id="pastedRoomTokenInput" placeholder="Paste external invite URL here..." style="width:100%; padding:8px; border-radius:6px; border:1px solid var(--border-color); background:rgba(0,0,0,0.3); color:#fff; font-size:0.8rem; outline:none; margin-bottom:8px;">
-                        <button class="dock-btn" style="width:100%; justify-content:center; background:#0078ff;" onclick="executeGlobalMeetingConnect()">⚡ Connect People Globally</button>
-                    </div>
-                    <hr style="border:0; border-top:1px solid var(--border-color);">
-                    <div>
-                        <h4 style="color:#38bdf8; margin-bottom:8px;">⏺️ Audio & Video Call Recorder</h4>
-                        <button class="dock-btn" id="meetingRecordBtn" style="width:100%; background:#ef4444; color:white;" onclick="toggleMeetingCallRecording()">⭕ Start Video Record</button>
-                        <div id="recordedFileHubPanel" style="display:none; flex-direction:column; gap:8px; margin-top:10px;">
-                            <p id="recordingStatusTicker" style="font-size:0.75rem; color:#94a3b8;">File processed.</p>
-                            <button class="dock-btn" style="background:#10b981; color:white; width:100%; justify-content:center;" onclick="downloadRecordToLocalDesktop()">📥 Save to Desktop</button>
-                            <button class="dock-btn" style="background:#a855f7; color:white; width:100%; justify-content:center;" onclick="shareRecordToOtherParticipants()">💬 Share to Live Chat Feed</button>
-                        </div>
-                    </div>
-                    <hr style="border:0; border-top:1px solid var(--border-color);">
-                    <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end;">
-                        <button class="dock-btn danger" style="width:100%; justify-content:center;" onclick="closeGlobalMeetingCallSession()">🔴 Cancel / End Meeting</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-                   <!-- APP 2: TEXT MEETING NETWORK WINDOW -->
-        <div class="app-window" id="textMeetingWin" style="top: 8%; left: 15%; width: 70%; height: 75%;">
-            <div class="window-header" style="background: #111b21; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <span class="presence-dot" style="background:#00a884; width:12px; height:12px;"></span>
-                    <span class="window-title" style="font-weight:700;">🔤 Text Meeting Network Channel — Salim A. Zakka</span> 
-                </div>
-                <div class="window-controls">
-                    <button onclick="toggleTextMeetingFullScreen()" title="Full Screen Text Channel">🔲 Full Screen</button>
-                    <button onclick="closeWindow('textMeetingWin')">❌</button>
-                </div>
-            </div>
-            
-            <div class="window-body" style="padding:0; height:calc(100% - 45px);">
-                <div class="messenger-wrapper">
-                    
-                    <!-- 📑 LEFT PANEL SIDEBAR: REAL WHATSAPP LIST COMPONENT -->
-                    <div class="messenger-sidebar">
-                        <div style="padding:15px; background:#202c33; font-weight:700; font-size:0.85rem; color:#8696a0;">ONLINE COMMUNICATION GROUPS</div>
-                        <div class="chat-profile-item active">
-                            <div style="font-size:1.5rem;">👥</div>
-                            <div>
-                                <div style="font-weight:600; font-size:0.9rem;">Global Room (142 Active)</div>
-                                <div style="font-size:0.75rem; color:#8696a0;">Salim: All necessary sector...</div>
-                            </div>
-                        </div>
-                        <div class="chat-profile-item" onclick="alert('Switching to Education sub-channel text stream...')">
-                            <div style="font-size:1.5rem;">🎓</div>
-                            <div>
-                                <div style="font-weight:600; font-size:0.9rem;">Education Sector Feed</div>
-                                <div style="font-size:0.75rem; color:#8696a0;">AI: Whiteboard mode verified...</div>
-                            </div>
-                        </div>
-                        <div class="chat-profile-item" onclick="alert('Switching to Healthcare encrypted logs text stream...')">
-                            <div style="font-size:1.5rem;">🏥</div>
-                            <div>
-                                <div style="font-weight:600; font-size:0.9rem;">Healthcare Clinical Room</div>
-                                <div style="font-size:0.75rem; color:#8696a0;">System: HIPAA secure layer...</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 💬 RIGHT PANEL SIDEBAR: ACTIVE MESSAGES TIMELINE CHANNEL -->
-                    <div class="messenger-chat-area">
-                        <div class="chat-stream-box" id="textMeetingBox" style="flex:1; padding:20px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;">
-                            <div class="whatsapp-bubble received">
-                                <div style="font-weight:700; font-size:0.75rem; color:#a855f7; margin-bottom:2px;">Omniverse AI</div>
-                                <div>Text call channel active. Communication parameters sync complete. Welcome Developer Salim!</div>
-                                <div style="text-align:right; font-size:0.65rem; color:#8696a0; margin-top:2px;">12:00 AM</div>
-                            </div>
-                        </div>
-                        
-                        <!-- WHATSAPP QUICK STYLE DESKTOP EMOJI BAR -->
-                        <div style="padding:8px 20px; background:#1f2c34; display:flex; gap:18px; font-size:1.3rem; cursor:pointer; border-top:1px solid rgba(255,255,255,0.05);">
-                            <span onclick="appendEmojiToTextInput('👍')">👍</span>
-                            <span onclick="appendEmojiToTextInput('❤️')">❤️</span>
-                            <span onclick="appendEmojiToTextInput('😂')">😂</span>
-                            <span onclick="appendEmojiToTextInput('😮')">😮</span>
-                            <span onclick="appendEmojiToTextInput('😢')">😢</span>
-                            <span onclick="appendEmojiToTextInput('🔥')">🔥</span>
-                            <span onclick="appendEmojiToTextInput('🚀')">🚀</span>
-                            <span onclick="appendEmojiToTextInput('🤝')">🤝</span>
-                        </div>
-
-                        <!-- MESSENGER FOOTER TYPING CONTROLS CONTROL ROW -->
-                        <div style="padding:10px 15px; background:#111b21; display:flex; gap:12px; align-items:center;">
-                            <input type="text" id="textMeetingInputField" placeholder="Type a message response..." style="flex:1; padding:12px 18px; border-radius:8px; border:none; background:#2a3942; color:#fff; outline:none; font-size:0.9rem;" onkeypress="handleTextNetworkInputKeyPress(event)">
-                            <button class="dock-btn" style="background:#00a884; color:white; border-radius:8px; padding:10px 18px; font-weight:700;" onclick="triggerTextNetworkBroadcast()">Send</button>
-                            <button class="dock-btn" id="textChatAudioRecordBtn" style="background:#0b8043; color:white; border-radius:8px; padding:10px 18px; font-weight:700;" onclick="toggleTextChatAudioRecording()">🎙️ Record</button>
-                        </div>
-                        <div id="textMeetingAudioStatus">Press record to send a voice note.</div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Social Channels Broadcast Pipeline Window -->
-        <div class="app-window" id="shareSocialWin">
-            <div class="window-header">
-                <span class="window-title">📢 Global Social Media Network Broadcast</span>
-                <div class="window-controls"><button onclick="closeWindow('shareSocialWin')">❌</button></div>
-            </div>
-            <div class="window-body">
-                <h3>Select Broadcast Target Pipelines:</h3><br>
-                <button class="dock-btn" onclick="sendToSocialNetworks('Facebook')">🔵 Share Meeting Link to Facebook</button><br><br>
-                <button class="dock-btn" onclick="sendToSocialNetworks('WhatsApp')">🟢 Share Connection Token to WhatsApp</button><br><br>
-                <button class="dock-btn" onclick="sendToSocialNetworks('Twitter / X')">⚫ Broadcast Live Stream to X (Twitter)</button>
-            </div>
-        </div>
-        <!-- 🎓 EDUCATION APPLICATION SUITE -->
-        <div class="app-window" id="eduWin" style="top: 8%; left: 15%; width: 70%; height: 78%;">
-            <div class="window-header" style="background: linear-gradient(90deg, #8b5cf6, #3b82f6); border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <span class="window-title" style="color: #fff; font-weight: 700;">🎓 Global Classroom Hub — Interactive Teaching Board</span>
-                <div class="window-controls"><button onclick="closeWindow('eduWin')">❌</button></div>
-            </div>
-            <div class="window-body" style="padding: 15px; height: calc(100% - 45px); background: #0b0f19; display: flex; gap: 15px;">
-                <div style="width: 25%; background: #111b21; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); padding: 15px; display: flex; flex-direction: column; gap: 12px;">
-                    <h4 style="color: #38bdf8; font-size: 0.9rem;">CLASSROOM CONTROL</h4>
-                    <span style="font-size: 0.7rem; color: #64748b;">Instructor: Salim A. Zakka</span>
-                    <button class="dock-btn" style="background: #8b5cf6; color: white; border: none; font-size: 0.8rem; width: 100%;" onclick="alert('🎨 Canvas Initialized! Sketch diagrams live.')">🎨 Activate Pen Grid</button>
-                    <button class="dock-btn" style="background: #ef4444; color: white; border: none; font-size: 0.8rem; width: 100%;" onclick="document.getElementById('whiteboardStatusText').innerText='Whiteboard Cleaned successfully.'; alert('🧹 Board Cleared successfully.')">🧹 Clear Canvas Grid</button>
-                    <button class="dock-btn" style="background: #10b981; color: white; border: none; font-size: 0.8rem; width: 100%;" onclick="runSectorAction('Education', 'Interactive Quiz Block Initialized.')">📝 Launch Exam Guard</button>
-                </div>
-                <div style="flex: 1; background: #ffffff; border-radius: 12px; position: relative; border: 2px dashed #8b5cf6; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; background-image: radial-gradient(#cbd5e1 1px, transparent 0); background-size: 20px 20px;">
-                    <span style="font-size: 4rem; color: #8b5cf6;">📋</span>
-                    <h3 id="whiteboardStatusText" style="color: #1e293b; font-weight: 700; margin-top: 10px;">VIRTUAL TEACHING CANVAS GRID READY</h3>
-                    <p style="font-size: 0.8rem; color: #64748b; text-align: center; max-width: 70%;">Select tools on the left panel grid to draw, project lecture metrics, or track multi-user attention indexes.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 🏥 HEALTHCARE CLINICAL APPLICATION SUITE -->
-        <div class="app-window" id="healthWin" style="top: 8%; left: 15%; width: 70%; height: 78%;">
-            <div class="window-header" style="background: linear-gradient(90deg, #00b0ff, #00e676); border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <span class="window-title" style="color: #fff; font-weight: 700;">🏥 Omniverse Advanced AI Bio-Medical Scanner Engine</span>
-                <div class="window-controls"><button onclick="closeWindow('healthWin')">❌</button></div>
-            </div>
-            <div class="window-body" style="padding: 15px; height: calc(100% - 45px); background: #0b0f19;">
-                <div class="scanner-grid-box">
-                    <div class="medical-left-viewport" id="scannerDisplayPort">
-                        <div class="laser-beam-line" id="medicalLaserBeam"></div>
-                        <span id="medicalMatrixGraphic" style="font-size: 5rem; transition: transform 0.5s;">🧍</span>
-                        <h4 id="scannerStatusText" style="color: #94a3b8; font-weight: 600; margin-top: 15px; text-align: center;">Bio-Telemetry Sensor Lines Ready</h4>
-                        <button class="dock-btn" style="background: #00e676; color: #000; font-weight: 700; margin-top: 15px; border: none;" onclick="triggerFullBodyDiseaseScanner()">⚡ Execute AI Full Body Scan</button>
-                    </div>
-                    <div class="medical-right-report">
-                        <div style="background: rgba(255,255,255,0.03); padding: 10px; border-radius: 8px; border-left: 4px solid #00b0ff;">
-                            <h4 style="color: #fff; font-size: 0.9rem;">CLINICAL LAB RECORD</h4>
-                            <span style="font-size: 0.7rem; color: #64748b;">Operator ID: Salim A. Zakka</span>
-                        </div>
-                        <div id="medicalReportTerminal" style="flex: 1; background: #070a12; padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); font-family: monospace; font-size: 0.8rem; overflow-y: auto; color: #00e676; display: flex; flex-direction: column; gap: 8px;">
-                            <p style="color: #64748b;">> Awaiting sensor frequency signals parameters...</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 💼 BUSINESS ENTERPRISE APPLICATION SUITE -->
-        <div class="app-window" id="bizWin">
-            <div class="window-header" style="background:#1e293b;"><span class="window-title">💼 Business Industry Terminal</span><div class="window-controls"><button onclick="closeWindow('bizWin')">❌</button></div></div>
-            <div class="window-body"><h3>Enterprise Settings & Operations:</h3><br><button class="dock-btn" style="width:100%; text-align:left; margin-bottom:10px;" onclick="alert('Annual General Meeting voting matrix generated. Secure data loops verified.')">📊 Run Secure AGM Shareholder Vote System</button></div>
-        </div>
-
-        <!-- 🌲 ENVIRONMENTAL ANALYTICS DASHBOARD WINDOW -->
-        <div class="app-window" id="envWin">
-            <div class="window-header" style="background:#1e293b;"><span class="window-title">🌲 Environmental Analytics Dashboard</span><div class="window-controls"><button onclick="closeWindow('envWin')">❌</button></div></div>
-            <div class="window-body"><h3>Telemetry Matrices & Feeds:</h3><br><button class="dock-btn" style="width:100%; text-align:left; margin-bottom:10px;" onclick="alert('Carbon emission telemetry monitors synced with regional data tracks.')">🌱 View Live Regional Carbon Emission Telemetry Monitors</button></div>
-        </div>
-
-        <!-- 📢 COMMUNICATION PRESS INDUSTRY SUITE -->
-        <div class="app-window" id="commWin">
-            <div class="window-header" style="background:#1e293b;"><span class="window-title">📢 Communication Channels Control</span><div class="window-controls"><button onclick="closeWindow('commWin')">❌</button></div></div>
-            <div class="window-body">
-                <h3>Production Layout Pipelines:</h3><br>
-                <button class="dock-btn" style="width:100%; text-align:left; margin-bottom:10px;" onclick="alert('Lower-Third Title Profile Graphic Overlays enabled. Creator: Salim A. Zakka.')">📺 Area A: Live Journalism Interview Layout Grid overlays</button>
-                <button class="dock-btn" style="width:100%; text-align:left; margin-bottom:10px;" onclick="alert('Reporter Question queue stack initialized. Host dashboard manager online.')">📰 Area B: Media Press Briefing Room Queue Manager</button>
-                <button class="dock-btn" style="width:100%; text-align:left;" onclick="alert('Uncompressed Media preview timelines synced with master video stream data.')">🎞️ Area C: Uncompressed Studio Production Review Pipeline</button>
-            </div>
-        </div>
-        <!-- ========================================== -->
-        <!-- 🔐 APP: SECURE LOGIN & ACCOUNT REGISTRATION -->
-        <!-- ========================================== -->
-        <div class="app-window" id="authGatewayWin" style="top: 20%; left: 35%; width: 32%; height: 60%; min-width: 300px;">
-            <div class="window-header" style="background: linear-gradient(90deg, #1e293b, #0f172a); border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <span class="window-title" style="color: #38bdf8; font-weight: 700;">🔐 Secure Access Portal</span>
-                <div class="window-controls"><button onclick="closeWindow('authGatewayWin')">❌</button></div>
-            </div>
-            <div class="window-body" style="background: #0f172a; display: flex; flex-direction: column; justify-content: center; padding: 25px;">
-                <div id="loginFormSection">
-                    <h3 style="margin-bottom: 5px; color: #fff;">System Authentication</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 20px;">Enter your workspace developer tokens to sync database logs.</p>
-                    
-                    <div class="login-input-group">
-                        <label>Account Email Address</label>
-                        <input type="email" id="authEmail" class="login-field" placeholder="name@zakkameet.global">
-                    </div>
-                    
-                    <div class="login-input-group" style="margin-bottom: 20px;">
-                        <label>Security Password</label>
-                        <input type="password" id="authPassword" class="login-field" placeholder="••••••••">
-                    </div>
-                    
-                    <button class="dock-btn" style="width: 100%; justify-content: center; background: #38bdf8; color: #000; font-weight: 700; margin-bottom: 15px;" onclick="executeSystemLoginVerification()">Verify Account Access</button>
-                    <p style="font-size: 0.8rem; text-align: center; color: var(--text-muted);">New Operator? <span style="color: #38bdf8; cursor: pointer; font-weight: 700;" onclick="alert('Switching server routing to Account Registration Node...')">Create Profile</span></p>
-                </div>
-            </div>
-        </div>
-        <!-- ========================================== -->
-        <!-- 💳 APP: STRIPE PREMIUM CHECKOUT GATEWAY    -->
-        <!-- ========================================== -->
-        <div class="app-window" id="billingWin" style="top: 15%; left: 35%; width: 35%; height: 65%; min-width: 320px;">
-            <div class="window-header" style="background: linear-gradient(90deg, #635bff, #00d4b6);">
-                <span class="window-title" style="font-weight: 700;">💳 Secure Stripe Billing Dashboard</span>
-                <div class="window-controls"><button onclick="closeWindow('billingWin')">❌</button></div>
-            </div>
-            <div class="window-body" style="display: flex; flex-direction: column; gap: 15px; padding: 25px; background: #0f172a;">
-                <h3 style="color: #fff; margin-bottom: 0;">Upgrade to ZAKKA MEET Premium</h3>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Unlock ultimate exponential wallet earnings clusters via Stripe payments.</p>
-                
-                <div class="login-input-group">
-                    <label style="color: #635bff;">Select Premium Operational Tier</label>
-                    <select id="stripePlanSelect" class="login-field" style="background: #1e293b; cursor: pointer; color: #fff;">
-                        <option value="15">Corporate Executive Tier — $15.00 / month</option>
-                        <option value="45">Ultimate Master Tier — $45.00 / month</option>
-                    </select>
-                </div>
-
-                <div class="login-input-group">
-                    <label style="color: #635bff;">Credit or Debit Card Number</label>
-                    <input type="text" id="stripeCardNum" class="login-field" maxlength="16" placeholder="4242 •••• •••• 4242">
-                </div>
-
-                <div style="display: flex; gap: 10px;">
-                    <div class="login-input-group" style="flex: 1;">
-                        <label style="color: #635bff;">Expiration Date</label>
-                        <input type="text" class="login-field" maxlength="5" placeholder="MM/YY">
-                    </div>
-                    <div class="login-input-group" style="flex: 1;">
-                        <label style="color: #635bff;">CVV Security Code</label>
-                        <input type="password" class="login-field" maxlength="3" placeholder="•••">
-                    </div>
-                </div>
-
-                <button class="dock-btn" style="width: 100%; justify-content: center; background: #635bff; color: #fff; font-weight: 700; margin-top: 10px; border-radius: 8px; border: none; padding: 12px; cursor: pointer;" onclick="executeStripeCheckoutPayment(document.getElementById('stripePlanSelect').options[document.getElementById('stripePlanSelect').selectedIndex].text, document.getElementById('stripePlanSelect').value)">
-                    ⚡ Complete Secure Checkout
-                </button>
-            </div>
-        </div>
-
-    </main>
-
-    <!-- SYSTEM FOOTER ACTIONS TRAY DOCK -->
-    <footer class="bottom-dock-bar">
-        <button class="dock-btn" id="muteBtn" onclick="toggleZakkaMeetMicrophone()">🎙️ Mute Mic</button>
-        <button class="dock-btn" id="camBtn" onclick="toggleStandaloneCameraDriver()">📹 Stop Cam Node</button>
-        <button class="dock-btn" onclick="executeRealScreenShare()">🖥️ Share Screen</button>
-        <button class="dock-btn" onclick="copyInviteLink()">🔗 Copy Link</button>
-        <button class="dock-btn danger" onclick="openWindow('exitWin')">🔴 Disconnect</button>
-    </footer>
-
-    <script src="app.js"></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
-
-        
-
-    
